@@ -179,7 +179,7 @@ var cobalt = {
     navigate:{
         //cobalt.navigate.push({ page : "next.html", controller:"myController", animated:false });
         push:function(options){
-            if (options && options.page){
+            if (options && (options.page || options.controller)){
                 cobalt.send({
                     type : "navigation",
                     action : "push",
@@ -207,7 +207,7 @@ var cobalt = {
         },
         //cobalt.navigate.popTo({ page : "next.html", controller:"myController" });
         popTo:function(options){
-            if (options && options.page){
+            if (options && (options.page || options.controller)){
                 cobalt.send({
                     type : "navigation",
                     action : "pop",
@@ -225,7 +225,7 @@ var cobalt = {
         },
         //cobalt.navigate.replace({ page : "next.html", controller:"myController", animated:false });
         replace:function(options){
-            if (options && options.page){
+            if (options && (options.page || options.controller)){
                 cobalt.send({
                     type : "navigation",
                     action : "replace",
@@ -242,7 +242,7 @@ var cobalt = {
             }
         },
         modal:function(options){
-            if (options && options.page){
+            if (options && (options.page || options.controller)){
                 cobalt.adapter.navigateToModal(options);
 
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -748,11 +748,11 @@ var cobalt = {
                     day: parseInt(values[2], 10)
                 };
                 cobalt.log('setting storage date ', 'CobaltDatePickerValue_' + id, d);
-                cobalt.storage.setItem('CobaltDatePickerValue_' + id, d, 'json')
+                cobalt.storage.set('CobaltDatePickerValue_' + id, d)
 
             } else {
                 cobalt.log('removing date');
-                cobalt.storage.removeItem('CobaltDatePickerValue_' + id)
+                cobalt.storage.remove('CobaltDatePickerValue_' + id)
             }
             return false;
         },
@@ -797,9 +797,8 @@ var cobalt = {
          cobalt.storage.get('age');
          //returns 12 (number)
 
-         //experimental :
          cobalt.storage.set('user',{name:'toto',age:6});
-         cobalt.storage.get('user','json');
+         cobalt.storage.get('user');
          //returns {name:'toto',age:6} (object)
 
          */
@@ -970,7 +969,7 @@ var cobalt = {
 					data : data
 				}
             });
-            cobalt.storage.removeItem("dismissInformations");
+            cobalt.storage.remove("dismissInformations");
         } else {
             cobalt.log("WANRING : dismissInformations are not available in storage")
         }
@@ -978,7 +977,7 @@ var cobalt = {
     },
     storeModalInformations: function (params) {
         cobalt.divLog("storing informations for the dismiss :", params);
-        cobalt.storage.setItem("dismissInformations", params, "json");
+        cobalt.storage.set("dismissInformations", params);
 
     },
     //localStorage stuff
@@ -1024,12 +1023,12 @@ var cobalt = {
                         if (newDate && newDate.year) {
                             input.value = newDate.year + '-' + newDate.month + '-' + newDate.day;
                             cobalt.log('setting storage date ', newDate);
-                            cobalt.storage.setItem('CobaltDatePickerValue_' + id, newDate, 'json');
+                            cobalt.storage.set('CobaltDatePickerValue_' + id, newDate);
                             cobalt.datePicker.enhanceFieldValue.apply(input);
                         } else {
                             cobalt.log('removing storage date');
                             input.value = "";
-                            cobalt.storage.removeItem('CobaltDatePickerValue_' + id)
+                            cobalt.storage.remove('CobaltDatePickerValue_' + id)
                         }
                     });
                     return false;
