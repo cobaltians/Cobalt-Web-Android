@@ -444,7 +444,15 @@ var cobalt = {
             if (cobalt.events && typeof cobalt.events[json.event] === "function") {
                 cobalt.events[json.event](json.data, json.callback);
             } else {
-                cobalt.adapter.handleUnknown(json)
+                switch (json.event) {
+                    case "onBackButtonPressed":
+                        cobalt.log('sending OK for a native back');
+                        cobalt.sendCallback(json.callback, {value: true});
+                        break;
+                    default :
+                        cobalt.adapter.handleUnknown(json);
+                        break;
+                }
             }
         },
         handleCallback: function (json) {
@@ -955,23 +963,6 @@ var cobalt = {
     init: function () {
         cobalt.platform = { is : "Android" };
     },
-    // handle events sent by native side
-    handleEvent: function (json) {
-        cobalt.log("received event", json.event);
-        if (cobalt.events && typeof cobalt.events[json.event] === "function") {
-            cobalt.events[json.event](json.data, json.callback);
-        } else {
-            switch (json.event) {
-                case "onBackButtonPressed":
-                    cobalt.log('sending OK for a native back');
-                    cobalt.sendCallback(json.callback, {value: true});
-                    break;
-                default :
-                    cobalt.adapter.handleUnknown(json);
-                    break;
-            }
-        }
-    },
     //send native stuff
     send: function (obj) {
         if (obj && !cobalt.debugInBrowser) {
@@ -1089,6 +1080,7 @@ var cobalt = {
     },
 
     //default behaviours
+    handleEvent: cobalt.defaultBehaviors.handleEvent,
     handleCallback: cobalt.defaultBehaviors.handleCallback,
     handleUnknown: cobalt.defaultBehaviors.handleUnknown
 };
