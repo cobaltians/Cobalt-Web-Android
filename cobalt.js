@@ -68,7 +68,9 @@ var cobalt = {
         cobalt.plugins.init();
 
         //send cobalt is ready event to native
-        cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        if (!options.manualReady){
+            cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        }
     },
     addEventListener: function (eventName, handlerFunction) {
         if (typeof eventName === "string" && typeof handlerFunction === "function") {
@@ -948,7 +950,7 @@ var cobalt = {
     //ANDROID ADAPTER
     //
     init: function () {
-        cobalt.platform = { is : "Android" };
+        cobalt.platform = { name: "Android", isAndroid : true, isIOS: false };
     },
     //send native stuff
     send: function (obj) {
@@ -968,7 +970,7 @@ var cobalt = {
             "type": "navigation",
             "action": "modal",
             data: {
-				page: options.page, 
+				page: options.page,
 				controller: options.controller,
 				data : options.data,
 				bars : options.bars
@@ -982,7 +984,7 @@ var cobalt = {
                 "type": "navigation",
                 "action": "dismiss",
                 data: {
-					page: dismissInformations.page, 
+					page: dismissInformations.page,
 					controller: dismissInformations.controller,
 					data : data
 				}
